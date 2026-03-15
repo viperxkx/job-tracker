@@ -436,7 +436,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-window.addEventListener('load', function() {
 var FB_CFG = {
   apiKey: "AIzaSyBXoTA-JI8yKb7QNXhfEVc0rb2MYO9jenU",
   authDomain: "job-tracker-c5656.firebaseapp.com",
@@ -460,15 +459,7 @@ var IVT = ['Phone Screen','Video Interview','Technical Test','Panel Interview','
 
 var auth=null,db=null,user=null,jobs=[],page='board',selId=null,openDD_id=null,authMode='login',filt='',curDrTab='details',addColStatus='Applied';
 
-try{
-  firebase.initializeApp(FB_CFG);
-  auth=firebase.auth();
-  db=firebase.firestore();
-  auth.onAuthStateChanged(function(u){
-    if(u){user=u;showApp(u);}
-    else{user=null;showAuth();}
-  });
-}catch(e){console.warn('Firebase:',e.message);}
+// Firebase init moved to DOMContentLoaded below
 
 function showAuth(){
   document.getElementById('auth').style.display='flex';
@@ -913,7 +904,19 @@ function toast(msg){var t=document.getElementById('tst');t.textContent=msg;t.sty
 document.getElementById('mback').addEventListener('click',function(e){if(e.target===this)closeAdd();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeAdd();closeDrawer();}});
 document.addEventListener('click',function(e){if(openDD_id&&!e.target.closest('.status-pill')&&!e.target.closest('.ddrop')){document.querySelectorAll('.ddrop').forEach(function(d){d.remove();});openDD_id=null;}});
-}); // end window.onload
+
+// Init Firebase on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    firebase.initializeApp(FB_CFG);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    auth.onAuthStateChanged(function(u) {
+      if(u){user=u;showApp(u);}
+      else{user=null;showAuth();}
+    });
+  } catch(e) { console.warn('Firebase:', e.message); }
+});
 </script>
 </body>
 </html>
